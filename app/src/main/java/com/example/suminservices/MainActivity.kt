@@ -35,6 +35,13 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         }
+
+        binding.intentService.setOnClickListener {
+            ContextCompat.startForegroundService(
+                this,
+                MyIntentService.newIntent(this)
+            )
+        }
     }
 
     private fun createNotificationChannel() {

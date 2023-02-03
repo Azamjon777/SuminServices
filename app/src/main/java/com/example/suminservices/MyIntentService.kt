@@ -1,19 +1,18 @@
 package com.example.suminservices
 
+import android.app.IntentService
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import kotlinx.coroutines.*
 
-class MyForegroundService : Service() {
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
-
+//этот сервис можно запускать как хотим, либо startService() либо StartForegroundService()
+//этот класс для того чтобы паралленльно не создавалось много потоков. И рнаследуемся от
+// IntentService()
+class MyIntentService : IntentService(NAME) {
     override fun onCreate() {
         super.onCreate()
         log("onCreate")
@@ -22,36 +21,23 @@ class MyForegroundService : Service() {
         startForeground(NOTIFICATION_ID, createNotification())
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        coroutineScope.launch {
-            log("onStart")
-            for (i in 0..100) {
-                delay(1000)
-                log("Timer $i")
-            }
-            stopSelf()//этот метод останавливает сервис изнутри, то есть в своем какомто потоке
-            // а stopService останавливает сервис из активити например(снаружи)
+    override fun onHandleIntent(intent: Intent?) {//этот метод будет выполняться в другом потоке
+        log("onHandleIntent")
+        for (i in 1..5) {
+            Thread.sleep(1000)
+            log("Timer $i")
         }
-        return START_STICKY
-        /*обычно onStartCommand возвращает одно из 3-х следующих комманд:
-        return START_STICKY - Сервис начинает работу заного, когда приложение уничтожится
-        return START_NOT_STICKY - Сервис, не запустится когда приложение уничтожится
-        return START_REDELIVER_INTENT - Сервис продолжит работу с назначенного нами числа
-        (например 25 как в нашем случае)*/
+        //после выполнения кода, сервис сам будет остановлен. И нам не унжно вызывать методы
+        // stopSelf() или stopService()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        coroutineScope.cancel()
         log("onDestroy")
     }
 
-    override fun onBind(p0: Intent?): IBinder? {
-        TODO("Not yet implemented")
-    }
-
     private fun log(message: String) {
-        Log.d("SERVICE TAG", "My Foreground Service $message")
+        Log.d("SERVICE TAG", "My Intent Service $message")
     }
 
     private fun createNotificationChannel() {
@@ -79,12 +65,13 @@ class MyForegroundService : Service() {
         .build()
 
     companion object {
-        const val CHANNEL_ID = "channel_foreground_id"
-        const val CHANNEL_NAME = "FOREGROUND"
+        const val CHANNEL_ID = "channel_intent_id"
+        const val CHANNEL_NAME = "INTENT"
         private const val NOTIFICATION_ID = 1//id никогда не должно == 0
+        private const val NAME = "MyIntentService"
 
         fun newIntent(context: Context): Intent {
-            return Intent(context, MyForegroundService::class.java)
+            return Intent(context, MyIntentService::class.java)
         }
     }
 }
