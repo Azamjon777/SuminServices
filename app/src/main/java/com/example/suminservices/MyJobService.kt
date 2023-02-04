@@ -9,12 +9,17 @@ class MyJobService : JobService() {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
+    override fun onCreate() {
+        super.onCreate()
+        log("onCreate")
+    }
+
     //возвращаемый тип Boolean озночает, выполняется ли наша работа все еще или нет
     override fun onStartJob(params: JobParameters?): Boolean {
         coroutineScope.launch {
             for (i in 1..100) {
                 delay(1000)
-                log("onStartCommand")
+                log("onStartCommand $i")
             }
             //снизу передаем обновление данных сервиса в фоне заного 'true'
             jobFinished(params, true)
@@ -24,20 +29,13 @@ class MyJobService : JobService() {
         return true
     }
 
-    /* если система убила наш сервис, вызывается метод onStopJob(), а если мы сами остановили сервис
-    с помощью метода jobFinished(), то метод onStopJob() */
+    /* если система убила наш сервис, вызывается метод onStopJob() */
     override fun onStopJob(params: JobParameters?): Boolean {
         log("onStopJob")
 
         /*если мы хотим чтобы сервис выполнялся, после того как сервис убила наш сервис, то
         возвращаем true*/
         return true
-    }
-
-
-    override fun onCreate() {
-        super.onCreate()
-        log("onCreate")
     }
 
     override fun onDestroy() {
@@ -48,5 +46,9 @@ class MyJobService : JobService() {
 
     private fun log(message: String) {
         Log.d("SERVICE TAG", "My Job Service $message")
+    }
+
+    companion object {
+        const val JOB_ID = 7//здесь любое id. Неважно какое
     }
 }

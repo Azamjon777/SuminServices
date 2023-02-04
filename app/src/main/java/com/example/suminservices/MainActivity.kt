@@ -1,6 +1,9 @@
 package com.example.suminservices
 
 import android.app.NotificationManager
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
@@ -41,6 +44,26 @@ class MainActivity : AppCompatActivity() {
                 this,
                 MyIntentService.newIntent(this)
             )
+        }
+
+        binding.jobScheduler.setOnClickListener {
+            val componentName = ComponentName(this, MyJobService::class.java)
+
+            val jobInfo = JobInfo.Builder(MyJobService.JOB_ID, componentName)
+                //снизу теперь можно вызывать разные методы-ограничители
+                //например мы хотим чтобы наш сервис работал только на устройстве которое заряжается
+                .setRequiresCharging(true)//вот таким образом
+
+                //если чтобы сервис запустился даже тогда, когда устройство выключили потом включили
+                .setPersisted(true)
+
+                //также мы бы хотели чтобы сервис работал только, если устройство подключено к wi-fi
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .build()//вызываем в самом конце
+
+            //теперь нужно запланировать выполнение сервиса
+            val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
+            jobScheduler.schedule(jobInfo)
         }
     }
 
