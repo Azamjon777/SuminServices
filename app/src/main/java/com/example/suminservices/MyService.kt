@@ -8,6 +8,8 @@ import android.util.Log
 import kotlinx.coroutines.*
 
 class MyService : Service() {
+    /*правило: код внутри сервиса работает на главном потоке. И при этом главный поток не должен
+    зависать. Поэтому мы используем Coroutines*/
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate() {
@@ -24,6 +26,7 @@ class MyService : Service() {
                 log("Timer $i")
             }
         }
+
         return START_REDELIVER_INTENT
         /*обычно onStartCommand возвращает одно из 3-х следующих комманд:
         return START_STICKY - Сервис начинает работу заного, когда приложение уничтожится

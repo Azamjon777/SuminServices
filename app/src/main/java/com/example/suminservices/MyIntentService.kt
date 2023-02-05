@@ -9,9 +9,9 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 
-//этот сервис можно запускать как хотим, либо startService() либо StartForegroundService()
-//этот класс для того чтобы паралленльно не создавалось много потоков. И рнаследуемся от
-// IntentService()
+/*этот сервис можно запускать как хотим, либо startService() либо StartForegroundService()
+этот класс для того чтобы паралленльно не создавалось много потоков. И рнаследуемся от
+IntentService()*/
 class MyIntentService : IntentService(NAME) {
     override fun onCreate() {
         super.onCreate()
@@ -27,8 +27,8 @@ class MyIntentService : IntentService(NAME) {
             Thread.sleep(1000)
             log("Timer $i")
         }
-        //после выполнения кода, сервис сам будет остановлен. И нам не унжно вызывать методы
-        // stopSelf() или stopService()
+        /*после выполнения кода, сервис сам будет остановлен. И нам не унжно вызывать методы
+         stopSelf() или stopService()*/
     }
 
     override fun onDestroy() {

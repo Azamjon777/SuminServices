@@ -2,6 +2,9 @@ package com.example.suminservices
 
 import android.app.job.JobParameters
 import android.app.job.JobService
+import android.content.Intent
+import android.os.Build
+import android.os.PersistableBundle
 import android.util.Log
 import kotlinx.coroutines.*
 
@@ -16,14 +19,30 @@ class MyJobService : JobService() {
 
     //возвращаемый тип Boolean озночает, выполняется ли наша работа все еще или нет
     override fun onStartJob(params: JobParameters?): Boolean {
-        coroutineScope.launch {
-            for (i in 1..100) {
-                delay(1000)
-                log("onStartCommand $i")
-            }
-            //снизу передаем обновление данных сервиса в фоне заного 'true'
+        log("onStartJob")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            coroutineScope.launch {
+                var workItem = params?.dequeueWork()//здесь из очереди берется 1-ый сервис
+                while (workItem != null) {//работаем пока не останется обьектов на очереди
+                    val page = workItem.intent.getIntExtra(PAGE, 0)
+
+                    for (i in 1..5) {//здесь в течении 5 секунд будут загружатся данные
+                        delay(1000)
+                        log("Timer $page $i")
+                    }
+                    params?.completeWork(workItem)
+                    workItem = params?.dequeueWork()
+                }
+                /*//снизу передаем обновление данных сервиса в фоне заного 'true'
             jobFinished(params, true)
+            здесь jobFinished обозначает что весь сервис закончил свою работу и никаких
+            очередей у нас не осталось, поэтому мы ее убираем. Потому что у нас очереди из
+            обьектов. jobFinished вызываем самым последним, после цыкла while()*/
+                jobFinished(params, false)/*перезапускать его не будем, так как внутри
+                больше ничего не будет, поэтому возвращаем false*/
+            }
         }
+
         /*снизу возвращаем true, потому что в нашем случае наша работа с корутинами еще не закончена
         в других случаях если работа с сервисами закончатся нужно возвращать false*/
         return true
@@ -50,5 +69,22 @@ class MyJobService : JobService() {
 
     companion object {
         const val JOB_ID = 7//здесь любое id. Неважно какое
+
+        private const val PAGE = "page"
+
+        /*PersistableBundle это обычный обьект в котором все значения хранятся парами
+        можно было использовать Bundle, но PersistableBundle можно клась нечто простое и строки,
+        это необходимо для того чтобы данные можно было без проблем считывать с диска*/
+        fun newBundle(page: Int): PersistableBundle {
+            return PersistableBundle().apply {
+                putInt(PAGE, page)
+            }
+        }
+
+        fun newIntent(page: Int): Intent {
+            return Intent().apply {
+                putExtra(PAGE, page)
+            }
+        }
     }
 }

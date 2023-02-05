@@ -3,7 +3,9 @@ package com.example.suminservices
 import android.app.NotificationManager
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
+import android.app.job.JobWorkItem
 import android.content.ComponentName
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
@@ -16,6 +18,8 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
+    private var page = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -24,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
             //здесь метод для остановления сервиса из presentation слоя
             stopService(MyForegroundService.newIntent(this))
-            createNotificationChannel()
+            createNotificationManager()
         }
 
         binding.foregroundService.setOnClickListener {
@@ -50,12 +54,11 @@ class MainActivity : AppCompatActivity() {
             val componentName = ComponentName(this, MyJobService::class.java)
 
             val jobInfo = JobInfo.Builder(MyJobService.JOB_ID, componentName)
-                //снизу теперь можно вызывать разные методы-ограничители
-                //например мы хотим чтобы наш сервис работал только на устройстве которое заряжается
-                .setRequiresCharging(true)//вот таким образом
+                //снизу мы передаем номер страницы, в которую хотим загрузить данные
 
-                //если чтобы сервис запустился даже тогда, когда устройство выключили потом включили
-                .setPersisted(true)
+                /*снизу теперь можно вызывать разные методы-ограничители
+                например мы хотим чтобы наш сервис работал только на устройстве которое заряжается*/
+                .setRequiresCharging(true)//вот таким образом
 
                 //также мы бы хотели чтобы сервис работал только, если устройство подключено к wi-fi
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
@@ -63,19 +66,20 @@ class MainActivity : AppCompatActivity() {
 
             //теперь нужно запланировать выполнение сервиса
             val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
-            jobScheduler.schedule(jobInfo)
+
+            /*jobScheduler.schedule(jobInfo)  //чтобы образовать список выполняемых списков, которые
+            ждут свою очередь, а не выполняться убивая предыдущих, нужно вызвать schedule()*/
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val intent = MyJobService.newIntent(page++)
+                jobScheduler.enqueue(jobInfo, JobWorkItem(intent))
+            }
         }
     }
 
-    private fun createNotificationChannel() {
-        /*Для каждого notification, должен быть создан свой notificationChannel. Еще создавать
-         NotificationChannel требуется начиная с 26 уровня, до этого данный код вызывать не нужно.
-         Поэтому необходимо добавить проверку*/
+    private fun createNotificationManager() {
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        //внутрь менеджера кладём канал
         notificationManager.notify(1, createNotification())
-
     }
 
     private fun createNotification() = NotificationCompat.Builder(
