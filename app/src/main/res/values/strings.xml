@@ -7,4 +7,5 @@
     <string name="job_intent_service">Job Intent Service</string>
     <string name="job_dispatcher">Job Dispatcher</string>
     <string name="intent_service">Intent Service</string>
+    <string name="job_scheduler">Job Scheduler</string>
 </resources>
