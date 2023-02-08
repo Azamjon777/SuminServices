@@ -75,7 +75,7 @@ class MyForegroundService : Service() {
     private fun createNotification() = NotificationCompat.Builder(this, CHANNEL_ID)
         .setContentTitle("title")
         .setContentText("text")
-        .setSmallIcon(R.drawable.ic_launcher_background)
+        .setSmallIcon(R.drawable.wet)
         .build()
 
     companion object {

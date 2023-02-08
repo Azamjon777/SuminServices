@@ -10,7 +10,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 
 /*этот сервис можно запускать как хотим, либо startService() либо StartForegroundService()
-этот класс для того чтобы паралленльно не создавалось много потоков. И рнаследуемся от
+этот класс для того чтобы паралленльно не создавалось много потоков. И наследуемся от
 IntentService()*/
 class MyIntentService : IntentService(NAME) {
     override fun onCreate() {
@@ -67,7 +67,7 @@ class MyIntentService : IntentService(NAME) {
     companion object {
         const val CHANNEL_ID = "channel_intent_id"
         const val CHANNEL_NAME = "INTENT"
-        private const val NOTIFICATION_ID = 1//id никогда не должно == 0
+        private const val NOTIFICATION_ID = 1         //id никогда не должно == 0
         private const val NAME = "MyIntentService"
 
         fun newIntent(context: Context): Intent {

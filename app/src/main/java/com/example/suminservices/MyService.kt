@@ -8,8 +8,8 @@ import android.util.Log
 import kotlinx.coroutines.*
 
 class MyService : Service() {
-    /*правило: код внутри сервиса работает на главном потоке. И при этом главный поток не должен
-    зависать. Поэтому мы используем Coroutines*/
+    /*сервисы работают на главном потоке. Чтобы не заблокировать главный поток,
+    мы работаем с корутинами*/
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate() {
