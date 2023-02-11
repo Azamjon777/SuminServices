@@ -27,11 +27,11 @@ class MyJobService : JobService() {
                 var workItem = params?.dequeueWork()//здесь из очереди берется 1-ый сервис
                 while (workItem != null) {//работаем пока не останется обьектов на очереди
                     val page = workItem.intent.getIntExtra(PAGE, 0)
-
                     for (i in 1..5) {//здесь в течении 5 секунд будут загружатся данные
                         delay(1000)
-                        log("Timer $page $i")
+                        log("Timer $i. Page is $page")
                     }
+                    /*снизу код для того чтобы завершить тот сервис, который выполнялся, а не весь*/
                     params?.completeWork(workItem)
                     workItem = params?.dequeueWork()
                 }

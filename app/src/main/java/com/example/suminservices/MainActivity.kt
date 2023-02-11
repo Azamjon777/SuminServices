@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 .setRequiresCharging(true)//вот таким образом
 
                 //также мы бы хотели чтобы сервис работал только, если устройство подключено к wi-fi
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                //.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 .build()//вызываем в самом конце
 
             //теперь нужно запланировать выполнение сервиса
