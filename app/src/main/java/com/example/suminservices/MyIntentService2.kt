@@ -9,6 +9,9 @@ class MyIntentService2 : IntentService(NAME) {
     override fun onCreate() {
         super.onCreate()
         log("onCreate")
+
+        /*снизу передаем true для того чтобы последний intent успешно доставлялся при перезапуске
+        сервиса*/
         setIntentRedelivery(true)
     }
 

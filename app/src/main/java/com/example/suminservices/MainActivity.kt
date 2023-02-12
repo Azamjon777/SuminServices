@@ -84,13 +84,15 @@ class MainActivity : AppCompatActivity() {
             //теперь нужно запланировать выполнение сервиса
             val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
 
+            //Тут работа с JobScheduler
+
             /*jobScheduler.schedule(jobInfo)  //чтобы образовать список выполняемых списков, которые
             ждут свою очередь, а не выполняться убивая предыдущих, нужно вызвать schedule()*/
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val intent = MyJobService.newIntent(page++)
-                jobScheduler.enqueue(jobInfo, JobWorkItem(intent))
+                jobScheduler.enqueue(jobInfo, JobWorkItem(intent))//для API>=26
             } else {
-                startService(MyIntentService2.newIntent(this, page++))
+                startService(MyIntentService2.newIntent(this, page++))//для API<26
             }
         }
 

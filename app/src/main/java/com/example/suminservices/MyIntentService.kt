@@ -10,8 +10,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 
 /*этот сервис можно запускать как хотим, либо startService() либо StartForegroundService()
-этот класс для того чтобы паралленльно не создавалось много потоков. И наследуемся от
-IntentService()*/
+этот класс для того чтобы параллельно не создавалось много потоков. Здесь сервисы выстраиваются в
+очередь. И наследуемся от IntentService()*/
 class MyIntentService : IntentService(NAME) {
     override fun onCreate() {
         super.onCreate()
@@ -23,7 +23,7 @@ class MyIntentService : IntentService(NAME) {
 
     override fun onHandleIntent(intent: Intent?) {//этот метод будет выполняться в другом потоке
         log("onHandleIntent")
-        for (i in 1..5) {
+        for (i in 1..10) {
             Thread.sleep(1000)
             log("Timer $i")
         }

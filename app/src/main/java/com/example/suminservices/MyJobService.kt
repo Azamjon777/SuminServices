@@ -9,6 +9,9 @@ import android.os.PersistableBundle
 import android.util.Log
 import kotlinx.coroutines.*
 
+/*Этот сервис для того чтобы выполнять задачи в фоне и при этом не показывать никаких уведомлений
+пользователю. Здесь тоже как и IntentService червисы выстраиваются в очередь. Бонусом является то,
+что в этом классе можно устанавливать правила в JobInfo(), например setRequiresCharging(true)*/
 @SuppressLint("SpecifyJobSchedulerIdRange")
 class MyJobService : JobService() {
 
@@ -82,6 +85,11 @@ class MyJobService : JobService() {
                 putInt(PAGE, page)
             }
         }
+        /*Сверху метод раньше использовался для передачи информации при помощи метода schedule().
+        Но таким образом при многократном вызове предыдущий сервис уничтожался, а новый начинал
+        работать тут-же. Изза этого мы начали использовать метод enqueue(). Этот метод принимал
+        обьект типа Intent, поэтому мы используем теперь метод снизу. Таким система не уничтожает
+        выполняющийся сервис, а выстраивает очередь.*/
 
         fun newIntent(page: Int): Intent {
             return Intent().apply {
