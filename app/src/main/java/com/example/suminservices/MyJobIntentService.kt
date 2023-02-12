@@ -5,6 +5,8 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.JobIntentService
 
+/*В JobIntentService можно работать и в API>26 и API<26. Но минус в том, что тут нельзя задавать
+ограничения*/
 class MyJobIntentService : JobIntentService() {
     override fun onCreate() {
         super.onCreate()
@@ -34,7 +36,7 @@ class MyJobIntentService : JobIntentService() {
         private const val JOB_ID = 123
 
         fun enqueue(context: Context, page: Int) {
-//            enqueueWork это метод класса JobIntentService
+            //enqueueWork это метод класса JobIntentService
             enqueueWork(
                 context,
                 MyJobIntentService::class.java,
