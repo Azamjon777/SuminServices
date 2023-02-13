@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.core.app.JobIntentService
 
 /*В JobIntentService можно работать и в API>26 и API<26. Но минус в том, что тут нельзя задавать
-ограничения*/
+ограничения. Этот сервис выполняется в фоновом потоке*/
 class MyJobIntentService : JobIntentService() {
     override fun onCreate() {
         super.onCreate()

@@ -10,7 +10,7 @@ class MyWorker(context: Context, private val workerParameters: WorkerParameters)
     //doWork выполняется по умолчанию в другом потоке
     override fun doWork(): Result {
         log("doWork")
-        workerParameters.inputData.getInt(PAGE, 0)
+        //workerParameters.inputData.getInt(PAGE, 0)
         for (i in 0..5) {
             Thread.sleep(1000)
             log("Timer $i")

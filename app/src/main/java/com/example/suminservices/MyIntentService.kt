@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat
 
 /*этот сервис можно запускать как хотим, либо startService() либо StartForegroundService()
 этот класс для того чтобы параллельно не создавалось много потоков. Здесь сервисы выстраиваются в
-очередь. И наследуемся от IntentService()*/
+очередь. Еще этот сервис выполняется в фоновом потоке*/
 class MyIntentService : IntentService(NAME) {
     override fun onCreate() {
         super.onCreate()
